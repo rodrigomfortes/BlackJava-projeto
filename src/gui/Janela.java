@@ -16,10 +16,23 @@ public class Janela extends JFrame {
     private JButton botaoParar;
     private JButton botaoJogarNovamente;  // Botão para jogar novamente
     private Image cartaVirada;
+    private Image imagemFundo;
 
     // Construtor
     public Janela() {
         super("BlackJack");
+
+        Font fontePersonalizada = new Font("Arial", Font.PLAIN, 16);
+
+        UIManager.put("Label.font", fontePersonalizada);
+        UIManager.put("Button.font", fontePersonalizada);
+        UIManager.put("TextField.font", fontePersonalizada);
+        UIManager.put("TextArea.font", fontePersonalizada);
+        UIManager.put("ComboBox.font", fontePersonalizada);
+        UIManager.put("Table.font", fontePersonalizada);
+        UIManager.put("OptionPane.messageFont", fontePersonalizada);
+        UIManager.put("OptionPane.buttonFont", fontePersonalizada);
+
 
         jogo = new BlackJack(this);  // Passa a instância de Janela para o jogo
 
@@ -30,6 +43,14 @@ public class Janela extends JFrame {
         } catch (IOException e) {
             System.out.println("Erro ao carregar imagem da carta virada");
             cartaVirada = null;
+        }
+
+        try {
+            imagemFundo = ImageIO.read(new File("src/cards/9fundoblackjava.png"));
+            imagemFundo = imagemFundo.getScaledInstance(700, 500, Image.SCALE_SMOOTH);
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar imagem de fundo");
+            imagemFundo = null;
         }
 
         configurarJanela();   // Configura a janela principal
@@ -53,11 +74,16 @@ public class Janela extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                if (imagemFundo != null) {
+                    g.drawImage(imagemFundo, 0, 0, getWidth(), getHeight(), this);
+                } else {
+                    setBackground(Color.DARK_GRAY); // fallback
+                }
                 desenharCartas(g);   // Desenha as cartas no painel
                 desenharMensagemFinal(g); // Exibe a mensagem final (vencedor)
             }
         };
-        painelJogo.setBackground(new Color(53, 101, 77));  // Cor de fundo
+        painelJogo.setBackground(new Color(0, 166, 255));  // Cor de fundo
         this.add(painelJogo, BorderLayout.CENTER); // Adiciona o painel ao centro da janela
     }
 
@@ -113,6 +139,11 @@ public class Janela extends JFrame {
     private void desenharCartas(Graphics g) {
         int larguraCarta = 80;
         int alturaCarta = 110;
+
+        Font fontePersonalizada = new Font("Arial", Font.PLAIN, 16);
+
+        g.setFont(fontePersonalizada);
+
 
         // Cria um Graphics2D para permitir a interpolação bilinear
         Graphics2D g2d = (Graphics2D) g;
